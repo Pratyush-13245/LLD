@@ -36,7 +36,6 @@ public class Main {
         System.out.println(
                 "Balance: " + account.getBalance()
         );
-
         bankService.deposit("1002", BigDecimal.valueOf(500.00));
         System.out.println();
 
