@@ -2,6 +2,7 @@
 package com.bank.app;
 
 import com.bank.model.BankAccount;
+import com.bank.model.Transaction;
 import com.bank.repository.BankAccountRepository;
 import com.bank.service.BankService;
 
@@ -11,22 +12,57 @@ public class Main {
 
     public static void main(String[] args) {
 
+        // 1. Initialize repository and service
         BankAccountRepository repository =
                 new BankAccountRepository();
 
         BankService bankService =
                 new BankService(repository);
 
-        BankAccount account =
+        // 2. Create accounts
+        BankAccount account1 =
                 bankService.createAccount("Prat", "1001");
 
-        BankAccount bankAccount =
+        BankAccount account2 =
                 bankService.createAccount("Praty", "1002");
 
-        System.out.println("Account created successfully!");
+        System.out.println("=== Accounts Created ===");
+
+        // 3. Deposit money into account 1001
+        bankService.deposit(
+                "1001",
+                new BigDecimal("500.00")
+        );
+
+        // 4. Transfer money from 1001 to 1002
+        bankService.transfer(
+                "1001",
+                "1002",
+                new BigDecimal("200.00")
+        );
+
+        // 5. Print final account details
+        System.out.println("\n=== Final Account Details ===");
+
+        printAccountDetails(bankService, "1001");
+        printAccountDetails(bankService, "1002");
+
+        // 6. Print transaction history
+        System.out.println("\n=== Transaction History ===");
+
+        printTransactionHistory(account1);
+        printTransactionHistory(account2);
+    }
+
+    private static void printAccountDetails(
+            BankService bankService,
+            String accountNumber
+    ) {
+        BankAccount account =
+                bankService.getAccount(accountNumber);
 
         System.out.println(
-                "Account Number: " + account.getAccountNumber()
+                "\nAccount Number: " + account.getAccountNumber()
         );
 
         System.out.println(
@@ -36,26 +72,23 @@ public class Main {
         System.out.println(
                 "Balance: " + account.getBalance()
         );
-        bankService.deposit("1002", BigDecimal.valueOf(500.00));
-        System.out.println();
+    }
 
-        System.out.println("Second account details:");
-
+    private static void printTransactionHistory(
+            BankAccount account
+    ) {
         System.out.println(
-                "Account Number: " + bankAccount.getAccountNumber()
+                "\nTransactions for " +
+                        account.getAccountHolderName() +
+                        " (" + account.getAccountNumber() + "):"
         );
 
-        System.out.println(
-                "Account Holder: " + bankAccount.getAccountHolderName()
-        );
-
-        System.out.println(
-                "Balance: " + bankService.getAccount("1002").getBalance()
-        );
-
-        bankService.withdraw("1002", BigDecimal.valueOf(200.00));
-        System.out.println(
-                "Balance: " + bankService.getAccount("1002").getBalance()
-        );
+        for (Transaction transaction : account.getTransactions()) {
+            System.out.println(
+                    transaction.getTransactionType() +
+                            " | Amount: " + transaction.getAmount() +
+                            " | Time: " + transaction.getTimestamp()
+            );
+        }
     }
 }
