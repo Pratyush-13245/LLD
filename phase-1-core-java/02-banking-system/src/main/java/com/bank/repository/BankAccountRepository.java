@@ -1,6 +1,8 @@
 
 package com.bank.repository;
 
+import com.bank.exception.AccountAlreadyExistsException;
+import com.bank.exception.AccountNotFoundException;
 import com.bank.model.BankAccount;
 
 import java.util.HashMap;
@@ -18,7 +20,7 @@ public class BankAccountRepository {
         String accountNumber = account.getAccountNumber();
 
         if (accounts.containsKey(accountNumber)) {
-            throw new IllegalArgumentException(
+            throw new AccountAlreadyExistsException(
                     "Account number already exists!"
             );
         }
@@ -30,7 +32,7 @@ public class BankAccountRepository {
         BankAccount account = accounts.get(accountNumber);
 
         if (account == null) {
-            throw new IllegalArgumentException("Account not found!");
+            throw new AccountNotFoundException("Account not found!");
         }
 
         return account;
