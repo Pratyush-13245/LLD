@@ -5,6 +5,7 @@ import com.bank.enums.TransactionType;
 import com.bank.model.BankAccount;
 import com.bank.model.Transaction;
 import com.bank.repository.BankAccountRepository;
+import com.bank.exception.InsufficientBalanceException;
 
 import java.math.BigDecimal;
 
@@ -17,22 +18,9 @@ public class BankService {
     }
 
     public BankAccount createAccount(
-            String accountHolderName,
-            String accountNumber
+            String accountNumber,
+            String accountHolderName
     ) {
-
-        if (accountHolderName == null || accountNumber == null) {
-            throw new IllegalArgumentException(
-                    "Arguments cannot be null!"
-            );
-        }
-
-        if (accountHolderName.isBlank() || accountNumber.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Arguments cannot be blank!"
-            );
-        }
-
         BankAccount bankAccount =
                 new BankAccount(accountNumber, accountHolderName);
 
@@ -83,7 +71,7 @@ public class BankService {
 
         Transaction transaction = new Transaction(
                 java.util.UUID.randomUUID().toString(),
-                TransactionType.WITHDRAWL,
+                TransactionType.WITHDRAWAL,
                 amount,
                 accountNumber
         );
@@ -126,10 +114,6 @@ public class BankService {
 
         BankAccount toAccount =
                 bankAccountRepository.getAccount(toAccountNumber);
-
-        if (fromAccount.getBalance().compareTo(amount) < 0) {
-            throw new IllegalArgumentException("Insufficient funds!");
-        }
 
         // Perform balance updates directly.
         fromAccount.withdraw(amount);

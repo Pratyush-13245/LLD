@@ -39,4 +39,13 @@ public class Transaction {
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
+    public String toString() {
+        return "Transaction{" +
+                "transactionId='" + transactionId + '\'' +
+                ", transactionType=" + transactionType +
+                ", amount=" + amount +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 }
